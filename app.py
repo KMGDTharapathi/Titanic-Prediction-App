@@ -23,17 +23,20 @@ MODEL_PATH = os.path.join(ROOT, 'model.pkl')
 @st.cache_data
 def load_data(path):
     df = pd.read_csv(path)
+    df = df.reset_index(drop=True)
 
-    # Explicitly set types
-    df['Sex'] = df['Sex'].astype(str)
-    df['Embarked'] = df['Embarked'].astype(str)
-    
-    # Numeric columns
+    # Convert object columns to strings
+    for col in df.select_dtypes(include=['object']).columns:
+        df[col] = df[col].astype(str)
+
+    # Ensure numeric columns are numeric
     numeric_cols = ['Pclass','Age','SibSp','Parch','Fare','Survived']
     for col in numeric_cols:
-        df[col] = pd.to_numeric(df[col], errors='coerce')
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce')
 
     return df
+
 
 
 @st.cache_data
