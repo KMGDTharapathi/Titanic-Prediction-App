@@ -153,6 +153,12 @@ elif page == "Model Prediction":
             'Embarked': embarked
         }])
 
+        # FIX: enforce correct types
+        sample['Sex'] = sample['Sex'].astype(str)
+        sample['Embarked'] = sample['Embarked'].astype(str)
+        for col in ['Pclass','Age','SibSp','Parch','Fare']:
+            sample[col] = pd.to_numeric(sample[col], errors='coerce')
+
         # Prediction
         try:
             proba = model.predict_proba(sample)[0]
