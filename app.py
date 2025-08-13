@@ -106,10 +106,12 @@ elif page == "Data Explorer":
         (df['Embarked'].isin(embarked)) &
         (df['Age'].between(age_range[0], age_range[1], inclusive="both")) &
         (df['Fare'].between(fare_range[0], fare_range[1], inclusive="both"))
-    ]
+    ].copy()  # <-- add .copy() here
+
     # Ensure Arrow compatibility for filtered dataframe
     for col in filtered.select_dtypes(include=['object']).columns:
-        filtered[col] = filtered[col].astype(str)
+        filtered.loc[:, col] = filtered[col].astype(str)  # <-- use .loc for assignment
+
     st.write("Filtered rows:", filtered.shape[0])
     st.dataframe(filtered.head(20))
 
@@ -172,7 +174,10 @@ elif page == "Model Prediction":
             st.error(f"Prediction failed: {e}")
 
         st.markdown("Example model input (for reference):")
-        st.table(sample.T)
+        # Ensure Arrow compatibility for transposed sample
+        sample_T = sample.T.copy()
+        sample_T[0] = sample_T[0].astype(str)
+        st.table(sample_T)
 
 elif page == "Model Performance":
     st.header("Model evaluation (on test split)")
