@@ -107,6 +107,9 @@ elif page == "Data Explorer":
         (df['Age'].between(age_range[0], age_range[1], inclusive="both")) &
         (df['Fare'].between(fare_range[0], fare_range[1], inclusive="both"))
     ]
+    # Ensure Arrow compatibility for filtered dataframe
+    for col in filtered.select_dtypes(include=['object']).columns:
+        filtered[col] = filtered[col].astype(str)
     st.write("Filtered rows:", filtered.shape[0])
     st.dataframe(filtered.head(20))
 
