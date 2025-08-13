@@ -47,6 +47,12 @@ if not os.path.exists(DATA_PATH):
     st.stop()
 
 df = load_data(DATA_PATH)
+
+# Convert all object columns to strings for Streamlit / PyArrow compatibility
+for col in df.select_dtypes(include=['object']).columns:
+    df[col] = df[col].astype(str)
+
+
 model = load_model(MODEL_PATH)
 
 if page == "Home":
