@@ -22,7 +22,19 @@ MODEL_PATH = os.path.join(ROOT, 'model.pkl')
 
 @st.cache_data
 def load_data(path):
-    return pd.read_csv(path)
+    df = pd.read_csv(path)
+
+    # Explicitly set types
+    df['Sex'] = df['Sex'].astype(str)
+    df['Embarked'] = df['Embarked'].astype(str)
+    
+    # Numeric columns
+    numeric_cols = ['Pclass','Age','SibSp','Parch','Fare','Survived']
+    for col in numeric_cols:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+
+    return df
+
 
 @st.cache_data
 def load_model(path):
